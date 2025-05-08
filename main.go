@@ -50,5 +50,6 @@ func main() {
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadNamespaceOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesMultiClusterOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(kubelet.BuildKubeletMixin(project, datasource, clusterLabelName))
+
 	dashboardWriter.Write()
 }
