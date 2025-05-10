@@ -5,13 +5,25 @@ import (
 	panels "github.com/perses/community-dashboards/pkg/panels/kubernetes"
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
-
+	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 )
 
+func withKubeletStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Kubelet Stats",
+		panelgroup.PanelsPerLine(6),
+		panels.RunningKubeletStat(datasource, labelMatcher),
+		panels.RunningPodStat(datasource, labelMatcher),
+		panels.RunningContainersStat(datasource, labelMatcher),
+		panels.ActVolumeCountStat(datasource, labelMatcher),
+		panels.DesiredVolumeCountStat(datasource, labelMatcher),
+		panels.ConfigErrorCountStat(datasource, labelMatcher),
+	)
+}
+
 func BuildKubeletMixin(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	//clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("kubelet",
 			dashboard.ProjectName(project),
@@ -39,6 +51,7 @@ func BuildKubeletMixin(project string, datasource string, clusterLabelName strin
 					listVar.DisplayName("instance"),
 				),
 			),
+			withKubeletStats(datasource, clusterLabelMatcher),
 		),
 	).Component("kubernetes")
 }
