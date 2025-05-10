@@ -303,3 +303,87 @@ func PodStartDuration(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 	)
 }
+
+func StorageOperationRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Storage Operation Rate",
+		panel.Description("Rate of Storage Operations"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.OpsPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum(rate(storage_operation_duration_seconds_count{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance,operation_name, volume_plugin)",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} {{operation_name}} {{volume_plugin}}"),
+			),
+		),
+	)
+}
+
+func StorageOperationErrorRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Storage Operation Error Rate",
+		panel.Description("Rate of Storage Operators Errors"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.OpsPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum(rate(storage_operation_errors_total{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance,operation_name, volume_plugin)",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} {{operation_name}} {{volume_plugin}}"),
+			),
+		),
+	)
+}
+
+func StorageOperationDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Storage Operation Duration 99th quantile",
+		panel.Description("99th percentile Duration of Storage Operations"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.SecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"histogram_quantile(0.99, sum(rate(storage_operation_duration_seconds_bucket{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance, operation_name, volume_plugin, le))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} {{operation_name}} {{volume_plugin}}"),
+			),
+		),
+	)
+}

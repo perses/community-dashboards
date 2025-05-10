@@ -45,6 +45,21 @@ func withPodStartRateAndDuration(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
+func withStorageOperationsAndErrors(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Storage Operations Rate and Errors",
+		panelgroup.PanelsPerLine(2),
+		panels.StorageOperationRate(datasource, labelMatcher),
+		panels.StorageOperationErrorRate(datasource, labelMatcher),
+	)
+}
+
+func withStorageOperationsQuantile(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Storage Operation Duration 99th quantile",
+		panelgroup.PanelsPerLine(1),
+		panels.StorageOperationDuration(datasource, labelMatcher),
+	)
+}
+
 func BuildKubeletMixin(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
@@ -78,6 +93,8 @@ func BuildKubeletMixin(project string, datasource string, clusterLabelName strin
 			withKubeletOperations(datasource, clusterLabelMatcher),
 			withKubeletOperationsQuantile(datasource, clusterLabelMatcher),
 			withPodStartRateAndDuration(datasource, clusterLabelMatcher),
+			withStorageOperationsAndErrors(datasource, clusterLabelMatcher),
+			withStorageOperationsQuantile(datasource, clusterLabelMatcher),
 		),
 	).Component("kubernetes")
 }
