@@ -6,6 +6,7 @@ import (
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	statPanel "github.com/perses/perses/go-sdk/panel/stat"
+	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
 	"github.com/perses/perses/go-sdk/prometheus/query"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
@@ -138,6 +139,166 @@ func ConfigErrorCountStat(datasourceName string, labelMatchers ...promql.LabelMa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
+			),
+		),
+	)
+}
+
+func OperationRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Operation Rate",
+		panel.Description("Rate of Container Runtime Operations, grouped by the type of Operation and kubelet instance"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.OpsPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum(rate(kubelet_runtime_operations_total{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (operation_type, instance)",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} {{operation_type}}"),
+			),
+		),
+	)
+}
+
+func OperationErrorRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Operation Error Rate",
+		panel.Description("Rate of Container Runtime Operations Errors, grouped by the type of Operation and kubelet instance"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.OpsPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum(rate(kubelet_runtime_operations_errors_total{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance, operation_type)",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} {{operation_type}}"),
+			),
+		),
+	)
+}
+
+func OperationDurationQuantile(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Operation Duration 99th quantile",
+		panel.Description("99th percentile latency (in seconds) for each runtime operation"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.SecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"histogram_quantile(0.99, sum(rate(kubelet_runtime_operations_duration_seconds_bucket{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance, operation_type, le))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} {{operation_type}}"),
+			),
+		),
+	)
+}
+
+func PodStartRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Pod Start Rate",
+		panel.Description("Rate of Starting Pods and Pod Worker Operations"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.OpsPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum(rate(kubelet_pod_start_duration_seconds_count{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance)",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} pod"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum(rate(kubelet_pod_worker_duration_seconds_count{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance)",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} worker"),
+			),
+		),
+	)
+}
+
+func PodStartDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Pod Start Duration",
+		panel.Description("99th percentile Duration of Starting Pods and Pod Worker Operations"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.SecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"histogram_quantile(0.99, sum(rate(kubelet_pod_start_duration_seconds_bucket{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance, le))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} pod"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"histogram_quantile(0.99, sum(rate(kubelet_pod_worker_duration_seconds_bucket{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance, le))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} worker"),
 			),
 		),
 	)
