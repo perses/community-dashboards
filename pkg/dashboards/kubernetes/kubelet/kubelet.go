@@ -60,6 +60,57 @@ func withStorageOperationsQuantile(datasource string, labelMatcher promql.LabelM
 	)
 }
 
+func withCgroupManager(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Cgroup manager",
+		panelgroup.PanelsPerLine(2),
+		panels.CgroupManagerOperationRate(datasource, labelMatcher),
+		panels.CgroupManagerQuantile(datasource, labelMatcher),
+	)
+}
+
+func withPLEGRelist(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("PLEG relist",
+		panelgroup.PanelsPerLine(2),
+		panels.PLEGRelistRate(datasource, labelMatcher),
+		panels.PLEGRelistInterval(datasource, labelMatcher),
+	)
+}
+
+func withPLEGRelistDuration(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("PLEG relist duration",
+		panelgroup.PanelsPerLine(1),
+		panels.PLEGRelistDuration(datasource, labelMatcher),
+	)
+}
+
+func withRPCRate(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("RPC rate",
+		panelgroup.PanelsPerLine(1),
+		panels.RPCRate(datasource, labelMatcher),
+	)
+}
+
+func withRequestDurationQuantile(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Request duration 99th quantile",
+		panelgroup.PanelsPerLine(1),
+		panels.RequestDurationQuantile(datasource, labelMatcher),
+	)
+}
+
+func withKubeletResources(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Memory and CPU Usage",
+		panelgroup.PanelsPerLine(2),
+		panels.KubeletMemory(datasource, labelMatcher),
+		panels.KubeletCPU(datasource, labelMatcher),
+	)
+}
+func withKubeletGoRoutines(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Goroutines",
+		panelgroup.PanelsPerLine(1),
+		panels.KubeletGoRoutines(datasource, labelMatcher),
+	)
+}
+
 func BuildKubeletMixin(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
@@ -69,7 +120,7 @@ func BuildKubeletMixin(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("cluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()),
+						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+"}"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("cluster"),
@@ -80,7 +131,7 @@ func BuildKubeletMixin(project string, datasource string, clusterLabelName strin
 					labelValuesVar.PrometheusLabelValues("instance",
 						labelValuesVar.Matchers(
 							promql.SetLabelMatchers(
-								"up{"+panels.GetKubeletMatcher(),
+								"up{"+panels.GetKubeletMatcher()+"}",
 								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
 							),
 						),
@@ -95,6 +146,13 @@ func BuildKubeletMixin(project string, datasource string, clusterLabelName strin
 			withPodStartRateAndDuration(datasource, clusterLabelMatcher),
 			withStorageOperationsAndErrors(datasource, clusterLabelMatcher),
 			withStorageOperationsQuantile(datasource, clusterLabelMatcher),
+			withCgroupManager(datasource, clusterLabelMatcher),
+			withPLEGRelist(datasource, clusterLabelMatcher),
+			withPLEGRelistDuration(datasource, clusterLabelMatcher),
+			withRPCRate(datasource, clusterLabelMatcher),
+			withRequestDurationQuantile(datasource, clusterLabelMatcher),
+			withKubeletResources(datasource, clusterLabelMatcher),
+			withKubeletGoRoutines(datasource, clusterLabelMatcher),
 		),
 	).Component("kubernetes")
 }
