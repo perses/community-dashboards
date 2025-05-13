@@ -813,6 +813,9 @@ func BucketUploadTable(datasourceName string, labelMatchers ...promql.LabelMatch
 				{
 					Name:   "value",
 					Header: "Uploaded Ago",
+					Format: commonSdk.Format{
+						Unit: string(commonSdk.SecondsUnit),
+					},
 				},
 				{
 					Name: "timestamp",
