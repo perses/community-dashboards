@@ -15,6 +15,7 @@ import (
 	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
 	"github.com/perses/community-dashboards/pkg/dashboards/perses"
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
+	"github.com/perses/community-dashboards/pkg/dashboards/tempo"
 	"github.com/perses/community-dashboards/pkg/dashboards/thanos"
 )
 
@@ -61,6 +62,7 @@ func main() {
 	dashboardWriter.Add(k8sNetworking.BuildKubernetesPodOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sNetworking.BuildKubernetesWorkloadOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sPersistentVolume.BuildKubernetesPersistentVolumeOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(tempo.BuildTempoWritesOverview(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
 }
