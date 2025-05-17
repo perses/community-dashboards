@@ -11,7 +11,7 @@ require (
 	github.com/perses/plugins/markdown v0.7.0
 	github.com/perses/plugins/prometheus v0.6.0
 	github.com/perses/plugins/statchart v0.6.0
-	github.com/perses/plugins/table v0.6.0
+	github.com/perses/plugins/table v0.6.1-0.20250505131755-a60fc0902424
 	github.com/perses/plugins/timeserieschart v0.6.0
 	github.com/prometheus/prometheus v0.303.1
 	gopkg.in/yaml.v3 v3.0.1
