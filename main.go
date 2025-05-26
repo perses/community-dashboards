@@ -70,6 +70,6 @@ func main() {
 	dashboardWriter.Add(apiserver.BuildAPIServerOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(tempo.BuildTempoWritesOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(tempo.BuildTempoTenantOverview(project, datasource, clusterLabelName))
-
+	dashboardWriter.Add(tempo.BuildTempoRolloutOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Write()
 }
