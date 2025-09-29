@@ -3025,6 +3025,327 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 			),
 		).By("source_workload", "source_workload_namespace"),
 	),
+	// istio workload additional
+	"IncomingRequestSizeBySource50": promqlbuilder.HistogramQuantile(0.50,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_request_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").Equal("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingRequestSizeBySource90": promqlbuilder.HistogramQuantile(0.90,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_request_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").Equal("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingRequestSizeBySource95": promqlbuilder.HistogramQuantile(0.95,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_request_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").Equal("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingRequestSizeBySource99": promqlbuilder.HistogramQuantile(0.90,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_request_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").Equal("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingRequestSizeBySourceNonmTLS50": promqlbuilder.HistogramQuantile(0.50,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_request_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").NotEqual("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingRequestSizeBySourceNonmTLS90": promqlbuilder.HistogramQuantile(0.90,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_request_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").NotEqual("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingRequestSizeBySourceNonmTLS95": promqlbuilder.HistogramQuantile(0.95,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_request_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").NotEqual("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingRequestSizeBySourceNonmTLS99": promqlbuilder.HistogramQuantile(0.90,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_request_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").NotEqual("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingResponseSizeBySource50": promqlbuilder.HistogramQuantile(0.50,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_response_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").Equal("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingResponseSizeBySource90": promqlbuilder.HistogramQuantile(0.90,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_response_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").Equal("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingResponseSizeBySource95": promqlbuilder.HistogramQuantile(0.95,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_response_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").Equal("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingResponseSizeBySource99": promqlbuilder.HistogramQuantile(0.99,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_response_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").Equal("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingResponseSizeBySourceNonmTLS50": promqlbuilder.HistogramQuantile(0.50,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_response_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").NotEqual("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingResponseSizeBySourceNonmTLS90": promqlbuilder.HistogramQuantile(0.90,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_response_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").NotEqual("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingResponseSizeBySourceNonmTLS95": promqlbuilder.HistogramQuantile(0.95,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_response_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").NotEqual("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
+	"IncomingResponseSizeBySourceNonmTLS99": promqlbuilder.HistogramQuantile(0.99,
+		promqlbuilder.Sum(
+			promqlbuilder.IRate(
+				matrix.New(
+					vector.New(
+						vector.WithMetricName("istio_response_bytes_bucket"),
+						vector.WithLabelMatchers(
+							label.New("reporter").EqualRegexp("$qrep"),
+							label.New("connection_security_policy").NotEqual("mutual_tls"),
+							label.New("destination_workload").EqualRegexp("$workload"),
+							label.New("destination_workload_namespace").EqualRegexp("$namespace"),
+							label.New("source_workload").EqualRegexp("$srcwl"),
+							label.New("source_workload_namespace").EqualRegexp("$srcns"),
+						),
+					),
+					matrix.WithRangeAsVariable("1m"),
+				),
+			),
+		).By("source_workload", "source_workload_namespace", "le"),
+	),
 }
 
 // OverrideIstionPanelQueries overrides the IstioCommonPanelQueries global.
